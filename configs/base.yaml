@@ -1,0 +1,73 @@
+# Defaults for every experiment. Experiment files set `base: base.yaml` and override keys.
+seed: 0
+device: auto            # auto | cuda | cpu
+data_root: data/isbi    # cache folder written by scripts/prepare_data.py
+train_split: train
+val_split: val
+algo: mappo             # dqn | mappo | coma | unet
+
+agent_steps: 3000000    # training budget per run, counted in alive agent-steps
+eval_every: 200000      # validation (greedy, val split) every N agent-steps
+batch_images: 8         # images per episode batch (B); agents per image = number of landmarks (K)
+gamma: 0.9
+
+env:
+  levels: [0, 1, 2, 3]                 # pyramid levels used, coarse -> fine
+  factors: {0: 8, 1: 4, 2: 2, 3: 1}     # downsampling vs 0.1 mm/px  -> 0.8 / 0.4 / 0.2 / 0.1 mm/px
+  step_px: {0: 16, 1: 8, 2: 2, 3: 1}    # move size in full-res px   -> 1.6 / 0.8 / 0.2 / 0.1 mm
+  caps: {0: 60, 1: 40, 2: 20, 3: 15}    # max steps per level (L0 reach 96 mm > worst Aariz start, 78 mm)
+  patch: 64
+  init: mean            # mean | mean_device (per imaging device, used for Aariz) | random
+  jitter_mm: 10         # training-time start jitter around the mean shape
+  share_positions: true # false = ablation: agents see only their own position
+  reward: individual    # individual | team (team = mean reward of the image's alive agents)
+  augment:
+    enabled: true
+    rot_deg: 10
+    scale: [0.9, 1.1]
+    shift: 0.05
+    gamma: [0.7, 1.5]
+    contrast: 0.2
+    brightness: 0.1
+    noise: 0.02
+
+dqn:
+  lr: 1.0e-4
+  buffer: 50000         # transitions (~8.5 KB each); raise if you have RAM
+  batch: 256
+  warmup: 5000
+  eps_end: 0.05
+  eps_frac: 0.3         # epsilon decays over this fraction of the budget
+  tau: 0.005            # Polyak target update
+  updates_per_step: 1
+
+mappo:
+  lr: 3.0e-4
+  gae_lambda: 0.95
+  clip: 0.2
+  epochs: 4
+  minibatch: 32         # (time, image) pairs per minibatch; each holds all K agents. Smaller = more updates per sample
+  value_coef: 0.5
+  entropy: 0.01
+
+coma:
+  lr_actor: 3.0e-4
+  critic_warmup: 20     # rollouts where only the critic learns (avoids early policy collapse)
+  lr_critic: 3.0e-4
+  td_lambda: 0.8
+  critic_epochs: 4
+  actor_epochs: 4       # actor uses PPO clipping on the counterfactual advantage
+  clip: 0.2
+  minibatch: 32
+  entropy: 0.03         # max entropy for 4 actions is 1.39; log line shows it, < 0.2 means collapse
+  target_every: 5       # rollouts between target-critic syncs
+
+unet:
+  encoder: resnet34
+  encoder_weights: imagenet   # null = random init (no download)
+  input_hw: [800, 640]        # images are resized to fit, keeping aspect ratio (~0.3 mm/px)
+  sigma: 5.0                  # target Gaussian, px at ~0.3 mm/px (~1.5 mm)
+  lr: 1.0e-3
+  epochs: 200
+  batch: 4
+  eval_every: 5

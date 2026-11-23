@@ -1,0 +1,5 @@
+# Ablation: no zoom, finest level only, same total step budget (135).
+base: isbi_dqn.yaml
+env:
+  levels: [3]
+  caps: {0: 60, 1: 40, 2: 20, 3: 135}

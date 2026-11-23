@@ -1,0 +1,5 @@
+base: base.yaml
+data_root: data/aariz
+algo: dqn
+env:
+  init: mean_device   # devices have very different fields of view

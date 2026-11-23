@@ -1,0 +1,11 @@
+# Tiny CPU run on the synthetic dataset, to check the pipeline end to end (minutes, not hours).
+base: base.yaml
+data_root: data/synthetic
+device: cpu
+agent_steps: 6000
+eval_every: 3000
+batch_images: 4
+dqn: {buffer: 5000, batch: 64, warmup: 500}
+mappo: {minibatch: 32, epochs: 4, lr: 1.0e-3, entropy: 0.003}
+coma: {minibatch: 32, critic_epochs: 2, actor_epochs: 2, critic_warmup: 2}
+unet: {encoder: resnet18, encoder_weights: null, input_hw: [256, 224], epochs: 2, batch: 4, eval_every: 1}

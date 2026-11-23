@@ -1,0 +1,4 @@
+# Ablation: MAPPO on the team reward (separates reward effect from algorithm effect vs COMA).
+base: isbi_mappo.yaml
+env:
+  reward: team

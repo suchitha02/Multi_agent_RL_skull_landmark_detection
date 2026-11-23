@@ -1,0 +1,5 @@
+# COMA variant on the individual reward (per-agent critic target). The canonical COMA
+# (aariz_coma.yaml) uses the shared team reward; with 19-29 agents its credit signal is weak.
+base: aariz_coma.yaml
+env:
+  reward: individual

@@ -1,0 +1,6 @@
+base: base.yaml
+data_root: data/aariz
+algo: coma
+env:
+  init: mean_device   # devices have very different fields of view
+  reward: team     # COMA is defined for a shared team reward

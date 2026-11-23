@@ -1,0 +1,5 @@
+base: base.yaml
+data_root: data/aariz
+algo: unet
+unet:
+  epochs: 60     # 700 training images = ~5x the ISBI updates per epoch

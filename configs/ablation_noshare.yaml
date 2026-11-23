@@ -1,0 +1,4 @@
+# Ablation: agents do not see each other's positions.
+base: isbi_dqn.yaml
+env:
+  share_positions: false

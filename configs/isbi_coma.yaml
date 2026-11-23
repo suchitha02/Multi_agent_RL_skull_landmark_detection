@@ -1,0 +1,5 @@
+base: base.yaml
+data_root: data/isbi
+algo: coma
+env:
+  reward: team     # COMA is defined for a shared team reward

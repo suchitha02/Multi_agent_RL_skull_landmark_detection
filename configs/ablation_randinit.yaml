@@ -1,0 +1,4 @@
+# Ablation: random start instead of the mean shape.
+base: isbi_dqn.yaml
+env:
+  init: random
